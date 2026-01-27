@@ -36,8 +36,11 @@ public class KerenAiService {
     }
 
     public String userInput(String userInput) {
+        log.info("Fetching context from similar documents for user input.");
         String context = getContextFromSimilarDocuments(userInput);
+        log.info("Context retrieved for user input.");
 
+        log.info("Sending prompt to LLM.");
         ChatResponse chatResponse = chatClient.prompt()
                 .system(SYSTEM_PROMPT)
                 .user(u -> u.text(USER_PROMPT_TEMPLATE)
@@ -45,11 +48,16 @@ public class KerenAiService {
                         .param("user_input", userInput))
                 .call().chatResponse();
 
+        log.info("Chat response received from LLM.");
         if(chatResponse != null){
+            log.info("Sending metrics to ChatMetricService.");
             sendMetricToChatMetricService(userInput, chatResponse);
+            log.info("Metrics sent.");
+            log.info("Returning AI response to user.");
             return chatResponse.getResult().getOutput().getText();
         }
         else{
+            log.warn("Chat response is null, throwing KerenAiException.");
             throw new KerenAiException(KEREN_AI_ERROR);
         }
     }
@@ -137,15 +145,19 @@ public class KerenAiService {
     private String getContextFromSimilarDocuments(String query) {
         List<Document> similarDocuments = searchSimilarDocuments(query);
         if (similarDocuments.isEmpty()) {
+            log.info("No similar documents found for query: {}", query);
             return "לא נמצא מידע רלוונטי במאגר.";
         }
+        log.info("Found {} similar documents for query: {}", similarDocuments.size(), query);
         return similarDocuments.stream()
                 .map(Document::getText)
                 .collect(Collectors.joining("\n\n"));
     }
 
     private List<Document> searchSimilarDocuments(String query) {
+        log.info("Searching for similar documents for query: {}", query);
         SearchRequest searchRequest = searchRequest(query);
+        log.info("SearchRequest created: {}", searchRequest);
         return vectorStore.similaritySearch(searchRequest);
     }
 

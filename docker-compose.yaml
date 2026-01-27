@@ -75,9 +75,10 @@ services:
       - GROQ_TEMPERATURE=${GROQ_TEMPERATURE}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_MODEL=${OPENAI_MODEL}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport
+      - OLLAMA_BASE_URL=http://ollama:11434
       - OLLAMA_MODEL=${OLLAMA_MODEL}
     networks:
       - internal-network
@@ -104,7 +105,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -133,7 +134,7 @@ services:
       start_period: 30s
     environment:
       - FRONTEND_URL=${FRONTEND_URL}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
     networks:
       - internal-network
