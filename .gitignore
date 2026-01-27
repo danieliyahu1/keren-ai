@@ -16,5 +16,6 @@ Thumbs.db
 **/target/
 **/*.log
 
-# Local data and AI models
-keren_ai_data/l
+# Local Docker data volumes (if converted to bind mounts)
+keren_ai_data/
+ollama_data/
