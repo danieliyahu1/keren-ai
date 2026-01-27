@@ -25,11 +25,42 @@ services:
     networks:
       - internal-network
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    expose:
+      - "11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - MODEL_NAME=llama3  # Your clients can easily change this
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list | grep -q '${OLLAMA_MODEL:-llama3}'"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    # The script below runs inside the container on startup
+    entrypoint: [ "/usr/bin/bash", "-c" ]
+    command: |
+      "ollama serve & 
+      sleep 5; 
+      if ! ollama list | grep -q '${OLLAMA_MODEL}'; then
+        echo 'Pulling model: ${OLLAMA_MODEL}...';
+        ollama pull ${OLLAMA_MODEL};
+      fi;
+      wait"
+    restart: unless-stopped
+    networks:
+      - internal-network
+
   admin-service:
     build:
       context: ./admin-service
     container_name: keren-ai-admin
     depends_on:
+      ollama:
+        condition: service_healthy
       keren-ai-db:
         condition: service_healthy
     healthcheck:
@@ -52,8 +83,10 @@ services:
       - GROQ_TEMPERATURE=${GROQ_TEMPERATURE}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_MODEL=${OPENAI_MODEL}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - OLLAMA_MODEL=${OLLAMA_MODEL}
     restart: unless-stopped
     networks:
       - internal-network
@@ -80,7 +113,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport
       - ADMIN_EMAIL=${ADMIN_EMAIL}
       - ADMIN_PASSWORD=${ADMIN_PASSWORD}
@@ -91,8 +124,8 @@ services:
     build:
       context: ./api-gateway
     container_name: keren-ai-api-gateway
-      #    ports:
-      #- "4003:4003"
+    ports:
+      - "4003:4003"
     depends_on:
       admin-service:
         condition: service_healthy
@@ -109,7 +142,7 @@ services:
       start_period: 30s
     environment:
       - FRONTEND_URL=${FRONTEND_URL}
-      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
     networks:
       - internal-network
@@ -143,8 +176,8 @@ services:
       args:
         - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     container_name: keren-ai-frontend
-      #    ports:
-      #      - "4173:4173"
+    ports:
+            - "4173:4173"
     depends_on:
       api-gateway:
         condition: service_healthy
@@ -189,5 +222,6 @@ networks:
     external: true
 
 
-      #volumes:
-      #  keren_ai_volume:
+volumes:
+  keren_ai_data:
+  ollama_data:

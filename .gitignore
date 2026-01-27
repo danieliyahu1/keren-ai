@@ -14,7 +14,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -39,4 +39,5 @@ build/
 auth-common
 
 ## Docker data dir
-keren_ai_data
+keren_ai_data/
+ollama_data/
