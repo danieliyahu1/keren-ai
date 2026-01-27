@@ -15,3 +15,6 @@ Thumbs.db
 # Maven / Java build artifacts
 **/target/
 **/*.log
+
+# Local data and AI models
+keren_ai_data/

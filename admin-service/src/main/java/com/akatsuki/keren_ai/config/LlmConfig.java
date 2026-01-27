@@ -24,6 +24,11 @@ public class LlmConfig {
     }
 
     @Bean
+    public ChatClient ollamaChatClient(@Qualifier("ollamaChatModel") ChatModel ollamaChatModel) {
+        return ChatClient.builder(ollamaChatModel).build();
+    }
+
+    @Bean
     public ChatModel groqChatModel(
             @Value("${groq.api.key}") String apiKey,
             @Value("${groq.base.url}") String baseUrl,

@@ -28,7 +28,7 @@ public class KerenAiService {
     private final VectorStore vectorStore;
     private final ChatMetricService chatMetricService;
 
-    public KerenAiService(@Qualifier("groqChatClient") ChatClient chatClient,
+    public KerenAiService(@Qualifier("ollamaChatClient") ChatClient chatClient,
                           VectorStore vectorStore, ChatMetricService chatMetricService) {
         this.chatMetricService = chatMetricService;
         this.chatClient = chatClient;
