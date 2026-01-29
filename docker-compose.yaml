@@ -28,10 +28,11 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
-    expose:
-      - "11434"
+      #expose:
+      #- "11434"
+    user: "1001:1001"
     volumes:
-      - ollama_data:/root/.ollama
+      - ./ollama_data:/.ollama
     environment:
       - MODEL_NAME=llama3  # Your clients can easily change this
     healthcheck:
