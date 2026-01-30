@@ -77,12 +77,6 @@ services:
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - GROQ_API_KEY=${GROQ_API_KEY}
-      - GROQ_BASE_URL=${GROQ_BASE_URL}
-      - GROQ_MODEL=${GROQ_MODEL}
-      - GROQ_TEMPERATURE=${GROQ_TEMPERATURE}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_MODEL=${OPENAI_MODEL}
       - SPRING_PROFILES_ACTIVE=${PROFILES_ACTIVE}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
       - OLLAMA_BASE_URL=http://ollama:11434
@@ -124,8 +118,8 @@ services:
     build:
       context: ./api-gateway
     container_name: keren-ai-api-gateway
-    ports:
-      - "4003:4003"
+      #    ports:
+      #- "4003:4003"
     depends_on:
       admin-service:
         condition: service_healthy
@@ -176,8 +170,8 @@ services:
       args:
         - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     container_name: keren-ai-frontend
-    ports:
-            - "4173:4173"
+      #    ports:
+      #      - "4173:4173"
     depends_on:
       api-gateway:
         condition: service_healthy
@@ -222,6 +216,6 @@ networks:
     external: true
 
 
-volumes:
-  keren_ai_data:
-  ollama_data:
+      #volumes:
+      #  keren_ai_volume:
+      #    ollama_data:
