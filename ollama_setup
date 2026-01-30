@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Stop script on first error
+set -e
+
+# Configuration
+DATA_DIR="./ollama_data"
+OLLAMA_UID=1001
+
+if [ -e "${DATA_DIR}" ] ; then
+	echo "${DATA_DIR} already exists!"
+	exit -1
+fi
+mkdir -p "${DATA_DIR}"
+chown "${OLLAMA_UID}" "${DATA_DIR}"
+

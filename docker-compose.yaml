@@ -28,10 +28,11 @@ services:
   ollama:
     image: ollama/ollama:latest
     container_name: ollama
-    expose:
-      - "11434"
+      #expose:
+      #- "11434"
+    user: "1001:1001"
     volumes:
-      - ollama_data:/root/.ollama
+      - ./ollama_data:/.ollama
     environment:
       - MODEL_NAME=llama3  # Your clients can easily change this
     healthcheck:
@@ -118,8 +119,8 @@ services:
     build:
       context: ./api-gateway
     container_name: keren-ai-api-gateway
-      #    ports:
-      #- "4003:4003"
+    ports:
+      - "4003:4003"
     depends_on:
       admin-service:
         condition: service_healthy
@@ -170,8 +171,8 @@ services:
       args:
         - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     container_name: keren-ai-frontend
-      #    ports:
-      #      - "4173:4173"
+    ports:
+            - "4173:4173"
     depends_on:
       api-gateway:
         condition: service_healthy
@@ -216,6 +217,6 @@ networks:
     external: true
 
 
-      #volumes:
-      #  keren_ai_volume:
-      #    ollama_data:
+volumes:
+  keren_ai_data:
+  ollama_data:
