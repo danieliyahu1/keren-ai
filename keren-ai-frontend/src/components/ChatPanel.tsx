@@ -5,11 +5,16 @@ type Msg = { type: 'user' | 'bot'; text: string };
 
 type ChatRequest = { message: string };
 
+const CHAT_DISCLAIMER_TEXT =
+  'ברוכים הבאים! אני כאן כדי לעזור, אך חשוב לזכור שאינני מחליף גורם אנושי מוסמך בנוסף אנא אל תכתבו פרטים אישיים רגישים בצ\'אט.';
+
 const ChatPanel: React.FC = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const chatBoxRef = useRef<HTMLDivElement | null>(null);
+
+  const showDisclaimer = messages.length === 0;
 
   useEffect(() => {
     const el = chatBoxRef.current;
@@ -48,8 +53,42 @@ const ChatPanel: React.FC = () => {
           flexDirection: 'column',
           gap: 10,
           background: '#f4f4f9',
+          position: 'relative',
         }}
       >
+        {showDisclaimer && (
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 16,
+            }}
+          >
+            <div
+              role="note"
+              aria-label="כתב ויתור"
+              style={{
+                width: '100%',
+                maxWidth: 320,
+                textAlign: 'center',
+                background: 'rgba(255, 255, 255, 0.92)',
+                border: '1px solid #e5e7eb',
+                color: '#374151',
+                padding: '12px 14px',
+                borderRadius: 12,
+                fontSize: 12,
+                lineHeight: 1.5,
+                boxShadow: '0 6px 16px rgba(0,0,0,0.08)',
+              }}
+            >
+              {CHAT_DISCLAIMER_TEXT}
+            </div>
+          </div>
+        )}
+
         {messages.map((m, idx) => (
           <div
             key={idx}
